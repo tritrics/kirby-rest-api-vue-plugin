@@ -81,28 +81,28 @@ const Request = class {
    * @param  {...any} val raw|router-links|nl2br|include-label
    */
   parse(...val) {
-    this.options.parseResult = !(val.indexOf('raw', val) > -1)
-    this.options.routerLinks = val.indexOf('router-links', val) > -1
-    this.options.nl2br = val.indexOf('nl2br', val) > -1
-    this.options.includeLabel = val.indexOf('include-label', val) > -1
+    this.parser.parseResult = !(val.indexOf('raw', val) > -1)
+    this.parser.routerLinks = val.indexOf('router-links', val) > -1
+    this.parser.nl2br = val.indexOf('nl2br', val) > -1
+    this.parser.includeLabel = val.indexOf('include-label', val) > -1
     return this
   }
 
-  languages() {
+  async languages() {
     const url = this.#url(this.#prop('host'), 'languages')
-    return this.#call(url)
+    return await this.#call(url)
   }
 
-  node(node) {
+  async node(node) {
     const url = this.#url(this.#prop('host'), 'node', this.#prop('lang'), node)
-    return this.#call(url, {
+    return await this.#call(url, {
       fields: this.#prop('fields'),
     })
   }
 
-  children(node) {
+  async children(node) {
     const url = this.#url(this.#prop('host'), 'children', this.#prop('lang'), node)
-    return this.#call(url, {
+    return await this.#call(url, {
       page: this.#prop('page'),
       limit: this.#prop('limit'),
       order: this.#prop('order'),
@@ -156,18 +156,23 @@ const Request = class {
       if (!json.ok) {
         throw new Error('API\'s response reports an error', { cause: json.status })
       }
-      if (this.options.parseResult && Object.prototype.hasOwnProperty.call(json, 'content')) {
-        json.content = new Parser(this.api, this.options).parse(json.content)
+      if (this.parser.parseResult && Object.prototype.hasOwnProperty.call(json, 'content')) {
+        json.content = new Parser(this.api, this.parser).parse(json.content)
       }
-      return json
+      return this.#return(json)
     } catch (E) {
-      return {
+      return this.#return({
         ok: 0,
         status: E.cause ?? 500,
         url,
         msg: E.message ?? 'Unknown fatal error',
-      }
+      })
     }
+  }
+
+  #return(obj) {
+    obj.log = () => import.meta.env.MODE === 'development' ? console.log(JSON.stringify(obj, undefined, 2)) : null
+    return obj
   }
 }
 
