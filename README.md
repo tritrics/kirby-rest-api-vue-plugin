@@ -1,6 +1,6 @@
-# Kirby rest api vue plugin
+# Kirby Rest Api Vue Plugin
 
-A vue plugin, that is build to communicate easily with tritrics/kirby-rest-api (not published yet). The plugin reflects the public rest-api methods and (optionally) converts the requested data.
+A vue plugin, that is build to communicate easily with [Kirby Rest Api](https://github.com/tritrics/kirby-rest-api). The plugin reflects the api methods and (optionally) converts the requested data.
 
 ## Installation
 
@@ -55,19 +55,20 @@ async myFunction() {
   # request
   const json = await request.languages()
   const json = await request.node('/path/of/slugs') // leave empty for site data
-  const json = request.children('/path/of/slugs') // leave empty for site children
+  const json = await request.children('/path/of/slugs') // leave empty for site children
   
   # log result (only in develop mode)
   json.log()
 }
 ```
+For documentation of the Api methods see [Kirby Rest Api](https://github.com/tritrics/kirby-rest-api).
 
 ### Short notation
 
 ```
 async myFunction() {
-	const json = await this.$api.request().all().node('/path/of/slugs')
-	json.log()
+  const json = await this.$api.request().all().node('/path/of/slugs')
+  json.log()
 }
 ```
 
@@ -77,13 +78,13 @@ Resized images can be easily requested from Kirby:
 
 ```
 const image = this.$api.image(
-	json.content.myImageField[0], // simply pass node from result
-	[width] // null|integer requested width in px
-	[height] // null|integer requested height in px
-	[crop] // null|true or option below, true is shortcut for 'center'
-	[blur] // null|integer blur factor > 0
-	[bw] // bool black/white
-	[quality] // null|integer jpg quality <= 100
+  json.content.myImageField[0], // simply pass node from result
+  [width] // null|integer requested width in px
+  [height] // null|integer requested height in px
+  [crop] // null|true or option below, true is shortcut for 'center'
+  [blur] // null|integer blur factor > 0
+  [bw] // bool black/white
+  [quality] // null|integer jpg quality <= 100
 )
 
 # Image data can than be taken from the object. Kirby automatically resizes
