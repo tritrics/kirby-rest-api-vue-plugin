@@ -9,7 +9,7 @@ A vue plugin, that is build to communicate easily with [Kirby Rest Api](https://
 ## Importing to project
 
 ```
-import apiPlugin from 'kirby-rest-api-rest-plugin'
+import apiPlugin from 'kirby-rest-api-vue-plugin'
 
 createApp(App).use(apiPlugin, {
   host: 'http://domain.com/rest-api',
