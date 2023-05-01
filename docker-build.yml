@@ -1,0 +1,9 @@
+version: '3.7'
+services:
+  app:
+    extends:
+      file: docker-compose.yml
+      service: app
+    command: npm run build
+    environment:
+      - NODE_ENV=production

@@ -1,0 +1,16 @@
+version: "3.4"
+services:
+  app:
+    image: tritrics/kirby-rest-api-vue-plugin
+    container_name: kirby-rest-api-vue-plugin
+    build:
+      context: ./
+    ports:
+      - 8080:8080
+    volumes:
+      - ./:/srv/app
+      - /srv/app/node_modules
+    command: npm run dev
+    environment:
+      - NODE_ENV=development
+    tty: true
