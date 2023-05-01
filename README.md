@@ -4,7 +4,7 @@ A vue plugin, that is build to communicate easily with [Kirby Rest Api](https://
 
 ## Installation
 
-```npm install kirby-rest-api-rest-plugin```
+```npm install kirby-rest-api-vue-plugin```
 
 ## Importing to project
 
