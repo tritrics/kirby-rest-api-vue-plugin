@@ -32,7 +32,6 @@ export default defineConfig({
       // name.umd.cjs) (common js module)
       // default fileName is the name option of package.json
       fileName: 'index',
-      sourcemap: 'hidden',
     },
     rollupOptions: {
 
