@@ -19,6 +19,7 @@ const KirbyApiVuePlugin = class {
     limit: 10,
     page: 1,
     order: 'asc',
+    parse: {}
   }
 
   constructor() {
@@ -33,8 +34,8 @@ const KirbyApiVuePlugin = class {
      */
     app.config.globalProperties.$api = {
       init: (val) => this.init(val),
-      request: () => new Request(this),
-      image: (...args) => new Image(this, ...args),
+      request: () => new Request(this.options),
+      image: (...args) => new Image(...args),
     }
   }
 

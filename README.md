@@ -11,9 +11,11 @@ A vue plugin, that is build to communicate easily with [Kirby Rest Api](https://
 ```
 import apiPlugin from 'kirby-rest-api-vue-plugin'
 
+# configure with default options
 createApp(App).use(apiPlugin, {
   host: 'http://domain.com/rest-api',
   [lang: 'en',]
+  [parse: ['router-links', 'nl2br', ...]]
 }).mount('#app')
 
 ```
@@ -50,6 +52,7 @@ async myFunction() {
     'router-links', // convert <a>-tags in html fields to router-links
     'nl2br', // replace newline to <br> in textfields
     'include-label' // include labels from select fields
+    'image-objects' // return an image object instead of raw image data
   )
 
   # request
@@ -72,7 +75,7 @@ async myFunction() {
 }
 ```
 
-## Images
+## Image
 
 Resized images can be easily requested from Kirby:
 
