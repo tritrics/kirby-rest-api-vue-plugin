@@ -1,67 +1,19 @@
 const Image = class {
-  /**
-   * The image object like provided from api
-   */
   orig = {}
-
-  /**
-   * The link object like provided from api
-   */
   link = {}
-
-  /**
-   * The value object like provided from api
-   */
   value = {}
-
-  /**
-   * the calculated src of the resized image
-   */
   src = null
-
-  /**
-   * calculated width of the resized image
-   */
   width = null
-
-  /**
-   * calculated height of the resized image
-   */
   height = null
-
-  /**
-   * crop the image, can be
-   * top-left, top, top-right, left, center, right, bottom-left, bottom, bottom-right
-   * where true is a shortcut for center
-   */
   crop = false
-
-  /**
-   * blurring factor, must be > 0
-   */
   blur = 0
-
-  /**
-   * convert to black/white, boolean
-   */
   bw = false
-
-  /**
-   * jpg quality, a value between 1 and 100
-   */
   quality = null
-
-  /**
-   * hires is calculated automatically from window-property
-   */
   hires = false
-
-  // all parameters may be set to null
   constructor(image, width, height, crop, blur, bw, quality) {
     this.#setOrig(image)
     this.resize(width, height, crop, blur, bw, quality)
   }
-
   resize(width, height, crop, blur, bw, quality) {
     this.#setCrop(crop)
     this.#setBlur(blur)
@@ -74,7 +26,6 @@ const Image = class {
     )
     this.#setSrc()
   }
-
   preload() {
     return new Promise((resolve, reject) => {
       if (typeof this.src === 'string') {
@@ -87,7 +38,6 @@ const Image = class {
       }
     })
   }
-  
   toJSON() {
     return {
       InstanceOfImage: {
@@ -97,7 +47,6 @@ const Image = class {
       }
     }
   }
-
   #setOrig(image) {
     if(typeof image === 'object' && image.isimage) {
       this.orig = { ...image }
@@ -107,7 +56,6 @@ const Image = class {
       delete(this.orig.value)
     }
   }
-
   #setCrop(crop) {
     const cropvalues = ['top-left', 'top', 'top-right', 'left', 'center', 'right', 'bottom-left', 'bottom', 'bottom-right']
     if (crop === false) {
@@ -118,51 +66,42 @@ const Image = class {
       this.crop = crop
     }
   }
-
   #setBlur(blur) {
     if (Math.floor(blur) === blur && blur >= 0) {
       this.blur = blur
     }
   }
-
   #setBw(bw) {
     if (bw === true || bw === false) {
       this.bw = bw
     }
   }
-
   #setQuality(quality) {
     if (Math.floor(quality) === quality && quality >= 1 && quality <= 100) {
       this.quality = quality
     }
   }
-
   #setHires() {
     this.hires = window.devicePixelRatio > 1
   }
-
   #setDimensions(width, height) {
     if (typeof this.orig !== 'object') {
       return
     }
     const ratio = Math.round(this.orig.width / this.orig.height, 4)
     const res = { width, height }
-
     // keep ratio, limit height to maxHeight
     if (width === null) {
       res.width = Math.round(height * ratio, 0)
       res.height = height
-
     // keep ratio, limit width to width
     } else if (height === null) {
       res.width = width
       res.height = Math.round(width / ratio, 0)
-
     // crop to fit in width and height
     } else if (typeof this.crop === 'string') {
       res.width = width
       res.height = height
-
     // keep ratio, fit either width or height
     } else {
       res.width = Math.round(height * ratio, 0)
@@ -173,13 +112,11 @@ const Image = class {
         res.height = Math.round(width / ratio, 0)
       }
     }
-
     // double resolution for hiRes displays
     if (this.hiRes) {
       res.width *= 2
       res.height *= 2
     }
-
     // correct the dimensions to not be bigger than original
     if ((res.width / this.orig.width) > 1 || (res.height / this.orig.height) > 1) {
       // take this.orig.width and calculate height
@@ -190,7 +127,6 @@ const Image = class {
           res.height = Math.floor((this.orig.width * res.height) / res.width)
         }
         res.width = this.orig.width
-
       // take this.orig.height and calculate width
       } else {
         if (width === null) {
@@ -204,10 +140,6 @@ const Image = class {
     this.width = res.width
     this.height = res.height
   }
-
-  /**
-   * filename-(width)x(height)[-crop-(option)][-blur(integer)][-bw][-q(integer)].ext
-   */
   #setSrc() {
     if (typeof this.orig !== 'object') {
       return

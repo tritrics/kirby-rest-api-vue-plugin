@@ -1,63 +1,20 @@
 const Options = class {
-  /**
-   * url to api including path (can be set in Kirby's config.php)
-   */
   host = null
-
-  /**
-   * lang-code, only needed in multilanguage sites
-   */
   lang = null
-
-  /**
-   * fieldnames as array to be includes in response
-   * can be 'all' to include all fields
-   */
   fields = []
-
-  /**
-   * parameter for children request:
-   * count of selected children
-   */
   limit = null
-
-  /**
-   * parameter for children request:
-   * count of page, for pagination in combinition with limit
-   */
   page = null
-
-  /**
-   * parameter for children request:
-   * order of selected children, can be 'asc' or 'desc'
-   */
   order = null
-
-  /**
-   * Parser-options
-   */
   parse = {
-
-    // return raw or parsed json
     raw: false,
-
-    // parse intern links to router links in hmtl-fields
     routerLinks: false,
-
-    // replace newlines \n with <br> in text-multiline (not in markdown)
     nl2br: false,
-
-    // include label(s) of select and multiselect-fields
     includeLabel: false,
-
-    // return image objects instead of image data
     imageObjects: false,
   }
-
   constructor(defaultOptions) {
     this.init(defaultOptions)
   }
-
   init(_options) {
     const options = typeof _options === 'object' ? _options : {}
     this.setHost(options.host)
@@ -68,7 +25,6 @@ const Options = class {
     this.setOrder(options.order)
     this.setParse(options.parse)
   }
-
   setHost(val) {
     if (typeof val === 'string' && val.length > 0 && val.startsWith('http')) {
       let host = val.toLowerCase().trim()
@@ -78,13 +34,11 @@ const Options = class {
       this.host = host
     }
   }
-
   setLang(val) {
     if (typeof val === 'string' && val.length > 0) {
       this.lang = val.toLowerCase().trim()
     }
   }
-
   setFields(val) {
     if (typeof val === 'string' && val.toLowerCase().trim() === 'all') {
       this.setAll()
@@ -94,23 +48,19 @@ const Options = class {
       this.fields = fields.map((field) => field.toLowerCase())
     }
   }
-
   setAll() {
     this.fields = 'all'
   }
-
   setLimit(val) {
     if (typeof val === 'number' && Math.floor(val) === val && val > 0) {
       this.limit = val
     }
   }
-
   setPage(val) {
     if (typeof val === 'number' && Math.floor(val) === val && val > 0) {
       this.page = val
     }
   }
-
   setOrder(val) {
     if (typeof val === 'string') {
       const order = val.toLowerCase().trim()
@@ -119,7 +69,6 @@ const Options = class {
       }
     }
   }
-
   setParse(val) {
     const settings = Object.keys(this.parse)
     if (Array.isArray(val)) {

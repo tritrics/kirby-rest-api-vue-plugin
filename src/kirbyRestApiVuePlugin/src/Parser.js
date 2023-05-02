@@ -1,16 +1,10 @@
 import Image from './Image'
 
 const Parser = class {
-  /**
-   * parsing options from Options.parse
-   * not a Parser-Object
-   */
   options
-
   constructor(options) {
     this.options = options
   }
-
   parse(obj) {
     if (!obj) return ''
     const res = Array.isArray(obj) ? [] : {}
@@ -68,15 +62,13 @@ const Parser = class {
             case 'user':
               res[key] = this.#parseUser(node)
               break
-            default: // text, tags, markdown
+            default:
               if (node['value'] !== undefined) {
                 res[key] = node.value
               } else {
                 res[key] = node
               }
           }
-        } else {
-          // res[key] = this.parse(node)
         }
       } else {
         res[key] = node
@@ -84,12 +76,10 @@ const Parser = class {
     })
     return res
   }
-
   #parsePage(node) {
     delete node.type
     return node
   }
-
   #parseFile(node) {
     delete node.type
     node.value = this.parse(node.value)
@@ -98,13 +88,11 @@ const Parser = class {
     }
     return node
   }
-
   #parseUser(node) {
     delete node.type
     node.value = this.parse(node.value)
     return node
   }
-
   #parseDate(node) {
     let date = new Date(node.datetime)
     date.toJSON = () => { return {
@@ -112,11 +100,9 @@ const Parser = class {
     }}
     return date
   }
-
   #parseNumber(node) {
     return parseFloat(node.value)
   }
-
   #parseHtml(node) {
     delete node.type
     let parsed = `${node}`
@@ -138,7 +124,6 @@ const Parser = class {
     }
     return parsed
   }
-
   #parseTextMultiline(text) {
     let parsed = `${text}`
     if (this.options.nl2br) {
@@ -146,7 +131,6 @@ const Parser = class {
     }
     return parsed
   }
-
   #parseSelect(node) {
     if (this.options.includeLabel) {
       return {
@@ -156,7 +140,6 @@ const Parser = class {
     }
     return node.value
   }
-
   #each(obj, iteratee) {
     if (Array.isArray(obj)) {
       obj.forEach((value, key) => iteratee(value, key, obj))

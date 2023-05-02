@@ -2,25 +2,18 @@ import Options from './Options'
 import Parser from './Parser'
 
 const Request = class {
-  /**
-   * options
-   */
   options
-
   constructor(defaultOptions) {
     this.options = new Options(defaultOptions)
   }
-
   host(host) {
     this.options.setHost(host)
     return this
   }
-
   lang(lang) {
     this.options.setLang(lang)
     return this
   }
-
   fields(...val) {
     if (val.length === 1 && typeof val[0] === 'string' && val[0].toLowerCase().trim() === 'all') {
       this.options.setAll()
@@ -29,50 +22,36 @@ const Request = class {
     }
     return this
   }
-
   all() {
     this.options.setAll()
     return this
   }
-
   limit(val) {
     this.options.setLimit(val)
     return this
   }
-
   page(val) {
     this.options.setPage(val)
     return this
   }
-
   order(val) {
     this.options.setOrder(val)
     return this
   }
-
-  // coming functionality
-  // filter() {}
-
-  /**
-   * @param  {...any} val raw|router-links|nl2br|include-label|image-objects
-   */
   parse(...val) {
     this.options.setParse(val)
     return this
   }
-
   async languages() {
     const url = this.#url(this.options.host, 'languages')
     return await this.#call(url)
   }
-
   async node(node) {
     const url = this.#url(this.options.host, 'node', this.options.lang, node)
     return await this.#call(url, {
       fields: this.options.fields,
     })
   }
-
   async children(node) {
     const url = this.#url(this.options.host, 'children', this.options.lang, node)
     return await this.#call(url, {
@@ -82,7 +61,6 @@ const Request = class {
       fields: this.options.fields,
     })
   }
-
   #url(...args) {
     let url = args.shift()
     url = url.endsWith('/') ? url.substring(0, url.length - 1) : url
@@ -97,12 +75,6 @@ const Request = class {
     }
     return url
   }
-
-  /**
-   * Async api calling, using
-   * https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch
-   * @param {string} url
-   */
   async #call(url, data) {
     const options = {}
     if (data && typeof data === 'object') {
@@ -138,7 +110,6 @@ const Request = class {
       })
     }
   }
-
   #return(obj) {
     obj.log = () => import.meta.env.MODE === 'development' ? console.log(JSON.stringify(obj, undefined, 2)) : null
     return obj
