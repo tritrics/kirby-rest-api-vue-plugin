@@ -33,6 +33,31 @@ const Options = class {
    */
   order = null
 
+  /**
+   * Parser-options
+   */
+  parse = {
+
+    // return raw or parsed json
+    raw: false,
+
+    // parse intern links to router links in hmtl-fields
+    routerLinks: false,
+
+    // replace newlines \n with <br> in text-multiline (not in markdown)
+    nl2br: false,
+
+    // include label(s) of select and multiselect-fields
+    includeLabel: false,
+
+    // return image objects instead of image data
+    imageObjects: false,
+  }
+
+  constructor(defaultOptions) {
+    this.init(defaultOptions)
+  }
+
   init(_options) {
     const options = typeof _options === 'object' ? _options : {}
     this.setHost(options.host)
@@ -41,6 +66,7 @@ const Options = class {
     this.setLimit(options.limit)
     this.setPage(options.page)
     this.setOrder(options.order)
+    this.setParse(options.parse)
   }
 
   setHost(val) {
@@ -91,6 +117,22 @@ const Options = class {
       if (order === 'asc' || order === 'desc') {
         this.order = order
       }
+    }
+  }
+
+  setParse(val) {
+    const settings = Object.keys(this.parse)
+    if (Array.isArray(val)) {
+      settings.forEach((setting) => {
+       const kebab = setting.replace(/[A-Z]+(?![a-z])|[A-Z]/g, ($, ofs) => (ofs ? "-" : "") + $.toLowerCase())
+        if (val.indexOf(kebab, val) > -1) {
+          this.parse[setting] = true
+        }
+      })
+    } else if (typeof val === 'object') {
+      settings.forEach((setting) => {
+        this.parse[setting] = val[setting] || false
+      })
     }
   }
 }

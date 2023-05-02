@@ -3,36 +3,12 @@ import Parser from './Parser'
 
 const Request = class {
   /**
-   * Api parent class
-   */
-  api
-
-  /**
-   * options which overwrite the default options from RestApi
+   * options
    */
   options
 
-  /**
-   * Parser-options, set by config()
-   */
-  parser = {
-
-    // return raw or parsed json
-    parseResult: true,
-
-    // parse intern links to router links in hmtl-fields
-    routerLinks: false,
-
-    // replace newlines \n with <br> in text-multiline (not in markdown)
-    nl2br: false,
-
-    // include label(s) of select and multiselect-fields
-    includeLabel: false,
-  }
-
-  constructor(api) {
-    this.api = api
-    this.options = new Options()
+  constructor(defaultOptions) {
+    this.options = new Options(defaultOptions)
   }
 
   host(host) {
@@ -78,40 +54,33 @@ const Request = class {
   // filter() {}
 
   /**
-   * @param  {...any} val raw|router-links|nl2br|include-label
+   * @param  {...any} val raw|router-links|nl2br|include-label|image-objects
    */
   parse(...val) {
-    this.parser.parseResult = !(val.indexOf('raw', val) > -1)
-    this.parser.routerLinks = val.indexOf('router-links', val) > -1
-    this.parser.nl2br = val.indexOf('nl2br', val) > -1
-    this.parser.includeLabel = val.indexOf('include-label', val) > -1
+    this.options.setParse(val)
     return this
   }
 
   async languages() {
-    const url = this.#url(this.#prop('host'), 'languages')
+    const url = this.#url(this.options.host, 'languages')
     return await this.#call(url)
   }
 
   async node(node) {
-    const url = this.#url(this.#prop('host'), 'node', this.#prop('lang'), node)
+    const url = this.#url(this.options.host, 'node', this.options.lang, node)
     return await this.#call(url, {
-      fields: this.#prop('fields'),
+      fields: this.options.fields,
     })
   }
 
   async children(node) {
-    const url = this.#url(this.#prop('host'), 'children', this.#prop('lang'), node)
+    const url = this.#url(this.options.host, 'children', this.options.lang, node)
     return await this.#call(url, {
-      page: this.#prop('page'),
-      limit: this.#prop('limit'),
-      order: this.#prop('order'),
-      fields: this.#prop('fields'),
+      page: this.options.page,
+      limit: this.options.limit,
+      order: this.options.order,
+      fields: this.options.fields,
     })
-  }
-
-  #prop(name) {
-    return this.options[name] || this.api.options[name]
   }
 
   #url(...args) {
@@ -156,8 +125,8 @@ const Request = class {
       if (!json.ok) {
         throw new Error('API\'s response reports an error', { cause: json.status })
       }
-      if (this.parser.parseResult && Object.prototype.hasOwnProperty.call(json, 'content')) {
-        json.content = new Parser(this.api, this.parser).parse(json.content)
+      if (!this.options.parse.raw && Object.prototype.hasOwnProperty.call(json, 'content')) {
+        json.content = new Parser(this.options.parse).parse(json.content)
       }
       return this.#return(json)
     } catch (E) {

@@ -1,35 +1,23 @@
+import Image from './Image'
+
 const Parser = class {
   /**
-   * Api parent class
-   */
-  api
-
-  /**
-   * Parsing options
+   * parsing options from Options.parse
+   * not a Parser-Object
    */
   options
 
-  /**
-   * Default parsing options
-   */
-  default = {
-    routerLinks: false,
-    nl2br: false,
-    includeLabel: false,
-  }
-
-  constructor(api, options) {
-    this.api = api
-    this.options = {
-      ...this.default,
-      ...options,
-    }
+  constructor(options) {
+    this.options = options
   }
 
   parse(obj) {
+    if (!obj) return ''
     const res = Array.isArray(obj) ? [] : {}
     this.#each(obj, (node, key) => {
-      if (typeof node === 'object' || Array.isArray(node)) {
+      if (key === 'link') {
+        res[key] = node
+      } else if (typeof node === 'object' || Array.isArray(node)) {
         if (node['type'] !== undefined) {
           switch (node.type) {
             case 'blocks':
@@ -39,7 +27,7 @@ const Parser = class {
               })
               break
             case 'datetime':
-              res[key] = new Date(node.datetime)
+              res[key] = this.#parseDate(node)
               break
             case 'email':
             case 'tel':
@@ -48,10 +36,7 @@ const Parser = class {
               res[key] = node
               break
             case 'file':
-            case 'user':
-              res[key] = node
-              delete node.type
-              res[key].value = this.parse(node.value)
+              res[key] = this.#parseFile(node)
               break
             case 'files':
             case 'object':
@@ -62,25 +47,26 @@ const Parser = class {
               break
             case 'html':
             case 'html-inline':
-              delete node.type
               res[key] = this.#parseHtml(node.value)
               break
             case 'page':
-              res[key] = node
-              delete node.type
+              res[key] = this.#parsePage(node)
               break
             case 'multiselect':
             case 'select':
               res[key] = this.#parseSelect(node)
               break
             case 'number':
-              res[key] = parseFloat(node.value)
+              res[key] = this.#parseNumber(node)
               break
             case 'text-multiline':
               res[key] = this.#parseTextMultiline(node.value)
               break
             case 'toggle':
               res[key] = !node.value
+              break
+            case 'user':
+              res[key] = this.#parseUser(node)
               break
             default: // text, tags, markdown
               if (node['value'] !== undefined) {
@@ -90,7 +76,7 @@ const Parser = class {
               }
           }
         } else {
-          res[key] = this.parse(node)
+          // res[key] = this.parse(node)
         }
       } else {
         res[key] = node
@@ -99,8 +85,41 @@ const Parser = class {
     return res
   }
 
-  #parseHtml(html) {
-    let parsed = `${html}`
+  #parsePage(node) {
+    delete node.type
+    return node
+  }
+
+  #parseFile(node) {
+    delete node.type
+    node.value = this.parse(node.value)
+    if (node.isimage && this.options.imageObjects) {
+      return new Image(node)
+    }
+    return node
+  }
+
+  #parseUser(node) {
+    delete node.type
+    node.value = this.parse(node.value)
+    return node
+  }
+
+  #parseDate(node) {
+    let date = new Date(node.datetime)
+    date.toJSON = () => { return {
+      InstanceOfDate: node
+    }}
+    return date
+  }
+
+  #parseNumber(node) {
+    return parseFloat(node.value)
+  }
+
+  #parseHtml(node) {
+    delete node.type
+    let parsed = `${node}`
 
     // strip slashes
     parsed = parsed.replace(/\\(.)/mg, '$1')

@@ -1,13 +1,18 @@
 const Image = class {
   /**
-   * Api parent class
-   */
-  api
-
-  /**
    * The image object like provided from api
    */
-  orig
+  orig = {}
+
+  /**
+   * The link object like provided from api
+   */
+  link = {}
+
+  /**
+   * The value object like provided from api
+   */
+  value = {}
 
   /**
    * the calculated src of the resized image
@@ -52,8 +57,7 @@ const Image = class {
   hires = false
 
   // all parameters may be set to null
-  constructor(api, image, width, height, crop, blur, bw, quality) {
-    this.api = api
+  constructor(image, width, height, crop, blur, bw, quality) {
     this.#setOrig(image)
     this.resize(width, height, crop, blur, bw, quality)
   }
@@ -83,10 +87,24 @@ const Image = class {
       }
     })
   }
+  
+  toJSON() {
+    return {
+      InstanceOfImage: {
+        orig: this.orig,
+        link: this.link,
+        value: this.value,
+      }
+    }
+  }
 
   #setOrig(image) {
-    if(typeof image === 'object' && image['is-image']) {
-      this.orig = image
+    if(typeof image === 'object' && image.isimage) {
+      this.orig = { ...image }
+      this.link = { ...image.link } || {}
+      delete(this.orig.link)
+      this.value = { ...image.value } || {}
+      delete(this.orig.value)
     }
   }
 
