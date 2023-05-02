@@ -60,7 +60,7 @@ async myFunction() {
   const json = await request.node('/path/of/slugs') // leave empty for site data
   const json = await request.children('/path/of/slugs') // leave empty for site children
   
-  # log result (only in develop mode)
+  # log result
   json.log()
 }
 ```

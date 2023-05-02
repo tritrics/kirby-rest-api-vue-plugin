@@ -111,7 +111,7 @@ const Request = class {
     }
   }
   #return(obj) {
-    obj.log = () => import.meta.env.MODE === 'development' ? console.log(JSON.stringify(obj, undefined, 2)) : null
+    obj.log = () => console.log(JSON.stringify(obj, null, 2))
     return obj
   }
 }
