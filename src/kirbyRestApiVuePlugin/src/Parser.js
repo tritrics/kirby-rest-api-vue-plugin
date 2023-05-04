@@ -43,6 +43,9 @@ const Parser = class {
             case 'html-inline':
               res[key] = this.#parseHtml(node.value)
               break
+            case 'link': // special subnode, don't parse further
+              res[key] = node
+              break
             case 'page':
               res[key] = this.#parsePage(node)
               break
@@ -69,6 +72,8 @@ const Parser = class {
                 res[key] = node
               }
           }
+        } else {
+          res[key] = this.parse(node)
         }
       } else {
         res[key] = node
