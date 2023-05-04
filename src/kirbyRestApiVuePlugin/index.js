@@ -1,41 +1,46 @@
 import Image from './src/Image'
-import Options from './src/Options'
 import Request from './src/Request'
 
-const KirbyApiVuePlugin = class {
-  options
-  default = {
-    host: null,
-    lang: null,
-    fields: [],
-    limit: 10,
-    page: 1,
-    order: 'asc',
-    parse: {}
-  }
-  constructor() {
-    this.options = new Options()
-  }
+let defaultOptions = {
+  host: null,
+  lang: null,
+  fields: [],
+  limit: 10,
+  page: 1,
+  order: 'asc',
+  parse: []
+}
 
-  install(app, options) {
-    this.init(options)
-    app.config.globalProperties.$api = {
-      init: (val) => this.init(val),
-      request: () => new Request(this.options),
-      image: (...args) => new Image(...args),
+export function createRequest() {
+  return new Request(defaultOptions)
+}
+
+export function createImage(...args) {
+  return new Image(...args)
+}
+
+export function setOptions(options) {
+    defaultOptions = {
+      ...defaultOptions,
+      ...options || {},
     }
+}
+
+export function createApi (options) {
+  if (typeof options === 'object') {
+    setOptions(options)
   }
-  init(obj) {
-    if (typeof obj === 'object') {
-      const merged = {
-        ...this.default,
-        ...obj,
+  return {
+    install(app, options) {
+      if (typeof options === 'object') {
+        setOptions(options)
       }
-      this.options.init(merged)
-    } else {
-      this.options.init(this.default)
+      app.config.globalProperties.$api = {
+        request: createRequest,
+        image: createImage,
+      }
     }
   }
 }
 
-export default new KirbyApiVuePlugin()
+export default () => createApi()
