@@ -28,7 +28,7 @@ async myFunction() {
   # Create a new request
   const request = this.$api.request()
 
-  # overwrite host and language from Plugin configuration (only for this request)
+  # overwrite host and language from Plugin configuration (only for single request)
   request.host('http://otherdomain.com/rest-api')
   request.lang('dk')
 
@@ -98,6 +98,12 @@ const height = image.height
 ```
 
 crop options : 'top-left', 'top', 'top-right', 'left', 'center', 'right', 'bottom-left', 'bottom', 'bottom-right'
+
+## Roadmap
+
+- support for composition api
+- filter for children-request
+- detailed documentation
 
 ## License
 
