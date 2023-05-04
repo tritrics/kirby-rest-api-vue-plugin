@@ -1,6 +1,6 @@
 {
   "name": "kirby-rest-api-vue-plugin",
-  "version": "0.9.5",
+  "version": "0.9.6",
   "description": "A vue plugin, that is build to communicate easily with tritrics/kirby-rest-api",
   "author": {
     "name": "Michael Adams",

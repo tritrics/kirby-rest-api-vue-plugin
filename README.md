@@ -8,17 +8,39 @@ A vue plugin, that is build to communicate easily with [Kirby Rest Api](https://
 
 ## Importing to project
 
+### The classic way
+
 ```
 import apiPlugin from 'kirby-rest-api-vue-plugin'
 
-# configure with default options
-createApp(App).use(apiPlugin, {
+# set some default options, at least the host
+const options = {
   host: 'http://domain.com/rest-api',
   [lang: 'en',]
   [parse: ['router-links', 'nl2br', ...]]
-}).mount('#app')
+}
+
+createApp(App)
+	.use(apiPlugin, options)
+	.mount('#app')
+```
+
+### Or use createApi() function
 
 ```
+import { createApi } from 'kirby-rest-api-vue-plugin'
+
+# pass options to createApi
+const apiPlugin = createApi({
+  host: 'http://domain.com/rest-api',
+})
+
+createApp(App)
+	.use(apiPlugin)
+	.mount('#app')
+```
+
+
 
 ## Requesting data
 
@@ -63,17 +85,26 @@ async myFunction() {
   # log result
   json.log()
 }
-```
-For documentation of the Api methods see [Kirby Rest Api](https://github.com/tritrics/kirby-rest-api).
 
 ### Short notation
-
-```
 async myFunction() {
   const json = await this.$api.request().all().node('/path/of/slugs')
   json.log()
 }
 ```
+### Composition Api
+
+In this case you have to use <Suspense> in parent component
+
+```
+<script setup async>
+	import { createRequest, createImage } from 'kirby-rest-api-vue-plugin'
+	const res = await createRequest().all().node('/path/of/slugs')
+	const image = createImage(res.content.imagefield[0])
+</script>
+```
+
+For documentation of the Api methods see [Kirby Rest Api](https://github.com/tritrics/kirby-rest-api).
 
 ## Image
 
@@ -101,7 +132,6 @@ crop options : 'top-left', 'top', 'top-right', 'left', 'center', 'right', 'botto
 
 ## Roadmap
 
-- support for composition api
 - filter for children-request
 - detailed documentation
 
