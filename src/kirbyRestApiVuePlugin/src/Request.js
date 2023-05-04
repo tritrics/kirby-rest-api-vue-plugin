@@ -63,6 +63,9 @@ const Request = class {
   }
   #url(...args) {
     let url = args.shift()
+    if (!url) {
+      throw new Error('No host defined for Api request')
+    }
     url = url.endsWith('/') ? url.substring(0, url.length - 1) : url
     let i
     for (i = 0; i < args.length; i += 1) {
