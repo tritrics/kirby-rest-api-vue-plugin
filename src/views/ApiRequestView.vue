@@ -1,8 +1,8 @@
 <script setup async>
-import { useApi } from '../kirbyRestApiVuePlugin'
+import { createRequest } from '../kirbyRestApiVuePlugin'
 
-const { request: newRequest } = useApi()
-const json = await newRequest().all().node('apitest')
+// const json = await createRequest().all().node('apitest')
+const json = await createRequest().languages()
 json.log()
 
 // (async () => {

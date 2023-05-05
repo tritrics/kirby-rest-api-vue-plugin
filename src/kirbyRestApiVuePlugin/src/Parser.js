@@ -11,8 +11,14 @@ const Parser = class {
     this.#each(obj, (node, key) => {
       if (key === 'link') {
         res[key] = node
-      } else if (typeof node === 'object' || Array.isArray(node)) {
-        if (node['type'] !== undefined) {
+        return
+      }
+      if (Array.isArray(node)) {
+        res[key] = this.parse(node)
+        return
+      }
+      if (node && typeof node === 'object') {
+        if (Object.prototype.hasOwnProperty.call(node, 'type')) {
           switch (node.type) {
             case 'blocks':
               res[key] = []
@@ -43,9 +49,6 @@ const Parser = class {
             case 'html-inline':
               res[key] = this.#parseHtml(node.value)
               break
-            case 'link': // special subnode, don't parse further
-              res[key] = node
-              break
             case 'page':
               res[key] = this.#parsePage(node)
               break
@@ -66,7 +69,7 @@ const Parser = class {
               res[key] = this.#parseUser(node)
               break
             default:
-              if (node['value'] !== undefined) {
+              if (Object.prototype.hasOwnProperty.call(node, 'value')) {
                 res[key] = node.value
               } else {
                 res[key] = node
@@ -75,9 +78,9 @@ const Parser = class {
         } else {
           res[key] = this.parse(node)
         }
-      } else {
-        res[key] = node
+        return
       }
+      res[key] = node
     })
     return res
   }
