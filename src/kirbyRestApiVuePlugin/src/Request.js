@@ -1,5 +1,6 @@
 import Options from './Options'
 import Parser from './Parser'
+import ApiError from './ApiError'
 
 const Request = class {
   options
@@ -43,7 +44,7 @@ const Request = class {
     return this
   }
   async languages() {
-    const url = this.#url(this.options.host, 'languages')
+    const url = this.#url(this.options.host, 'languagess')
     return await this.#call(url)
   }
   async node(node) {
@@ -94,23 +95,19 @@ const Request = class {
     try {
       const response = await fetch(url, options)
       if (!response.ok) {
-        throw new Error(response.statusText, { cause: response.status })
+        throw new ApiError(response.statusText, response.status, url)
       }
       const json = await response.json()
       if (!json.ok) {
-        throw new Error('API\'s response reports an error', { cause: json.status })
+        throw new ApiError('API reports an error', json.status, url)
       }
       if (!this.options.parse.raw && Object.prototype.hasOwnProperty.call(json, 'content')) {
         json.content = new Parser(this.options.parse).parse(json.content)
       }
       return this.#return(json)
     } catch (E) {
-      return this.#return({
-        ok: 0,
-        status: E.cause ?? 500,
-        url,
-        msg: E.message ?? 'Unknown fatal error',
-      })
+      if (E instanceof ApiError) throw E
+      throw new ApiError(E.message ?? 'Unknown fatal error',  E.cause ?? 500, url)
     }
   }
   #return(obj) {
