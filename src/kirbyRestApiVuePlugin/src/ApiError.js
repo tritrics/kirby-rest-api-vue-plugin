@@ -4,7 +4,6 @@ class ApiError extends Error {
     if (Error.captureStackTrace) {
       Error.captureStackTrace(this, ApiError);
     }
-    console.log(msg, status)
     this.name = "ApiError"
     this.msg = msg
     this.status = status
