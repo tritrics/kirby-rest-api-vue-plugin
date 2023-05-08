@@ -44,7 +44,7 @@ const Request = class {
     return this
   }
   async languages() {
-    const url = this.#url(this.options.host, 'languagess')
+    const url = this.#url(this.options.host, 'languages')
     return await this.#call(url)
   }
   async node(node) {
