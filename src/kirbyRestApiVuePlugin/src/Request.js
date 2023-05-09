@@ -4,17 +4,21 @@ import ApiError from './ApiError'
 
 const Request = class {
   options
+
   constructor(defaultOptions) {
     this.options = new Options(defaultOptions)
   }
+
   host(host) {
     this.options.setHost(host)
     return this
   }
+
   lang(lang) {
     this.options.setLang(lang)
     return this
   }
+
   fields(...val) {
     if (val.length === 1 && typeof val[0] === 'string' && val[0].toLowerCase().trim() === 'all') {
       this.options.setAll()
@@ -23,45 +27,60 @@ const Request = class {
     }
     return this
   }
+
   all() {
     this.options.setAll()
     return this
   }
+
   limit(val) {
     this.options.setLimit(val)
     return this
   }
+
   page(val) {
     this.options.setPage(val)
     return this
   }
+
   order(val) {
     this.options.setOrder(val)
     return this
   }
+
   parse(...val) {
     this.options.setParse(val)
     return this
   }
+
   async languages() {
     const url = this.#url(this.options.host, 'languages')
-    return await this.#call(url)
+    return this.#call(url)
   }
+
   async node(node) {
     const url = this.#url(this.options.host, 'node', this.options.lang, node)
-    return await this.#call(url, {
+    return this.#call(url, {
       fields: this.options.fields,
     })
   }
+
   async children(node) {
     const url = this.#url(this.options.host, 'children', this.options.lang, node)
-    return await this.#call(url, {
+    return this.#call(url, {
       page: this.options.page,
       limit: this.options.limit,
       order: this.options.order,
       fields: this.options.fields,
     })
   }
+
+  async call(node, data) {
+    const url = this.#url(this.options.host, node)
+    this.parse('raw') // always raw
+    return this.#call(url, data)
+  }
+
   #url(...args) {
     let url = args.shift()
     if (!url) {
@@ -79,6 +98,7 @@ const Request = class {
     }
     return url
   }
+
   async #call(url, data) {
     const options = {}
     if (data && typeof data === 'object') {
@@ -110,6 +130,7 @@ const Request = class {
       throw new ApiError(E.message ?? 'Unknown fatal error',  E.cause ?? 500, url)
     }
   }
+
   #return(obj) {
     obj.log = () => console.log(JSON.stringify(obj, null, 2))
     return obj

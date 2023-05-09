@@ -8,7 +8,7 @@ let defaultOptions = {
   limit: 10,
   page: 1,
   order: 'asc',
-  parse: []
+  parse: [],
 }
 
 export function createRequest() {
@@ -20,10 +20,10 @@ export function createImage(...args) {
 }
 
 export function setOptions(options) {
-    defaultOptions = {
-      ...defaultOptions,
-      ...options || {},
-    }
+  defaultOptions = {
+    ...defaultOptions,
+    ...options || {},
+  }
 }
 
 export function createApi (options) {
@@ -31,16 +31,16 @@ export function createApi (options) {
     setOptions(options)
   }
   return {
-    install(app, options) {
-      if (typeof options === 'object') {
-        setOptions(options)
+    install(app, opt) {
+      if (typeof opt === 'object') {
+        setOptions(opt)
       }
       app.config.globalProperties.$api = {
         request: createRequest,
         image: createImage,
       }
-    }
+    },
   }
 }
 
-export default () => createApi()
+export default createApi

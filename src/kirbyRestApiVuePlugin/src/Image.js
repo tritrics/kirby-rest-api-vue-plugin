@@ -1,19 +1,31 @@
 const Image = class {
   orig = {}
+
   link = {}
+
   value = {}
+
   src = null
+
   width = null
+
   height = null
+
   crop = false
+
   blur = 0
+
   bw = false
+
   quality = null
+
   hires = false
+
   constructor(image, width, height, crop, blur, bw, quality) {
     this.#setOrig(image)
     this.resize(width, height, crop, blur, bw, quality)
   }
+
   resize(width, height, crop, blur, bw, quality) {
     this.#setCrop(crop)
     this.#setBlur(blur)
@@ -26,6 +38,7 @@ const Image = class {
     )
     this.#setSrc()
   }
+
   preload() {
     return new Promise((resolve, reject) => {
       if (typeof this.src === 'string') {
@@ -38,24 +51,27 @@ const Image = class {
       }
     })
   }
+
   toJSON() {
     return {
       InstanceOfImage: {
         orig: this.orig,
         link: this.link,
         value: this.value,
-      }
+      },
     }
   }
+
   #setOrig(image) {
-    if(typeof image === 'object' && image.isimage) {
+    if (typeof image === 'object' && image.isimage) {
       this.orig = { ...image }
       this.link = { ...image.link } || {}
-      delete(this.orig.link)
+      delete (this.orig.link)
       this.value = { ...image.value } || {}
-      delete(this.orig.value)
+      delete (this.orig.value)
     }
   }
+
   #setCrop(crop) {
     const cropvalues = ['top-left', 'top', 'top-right', 'left', 'center', 'right', 'bottom-left', 'bottom', 'bottom-right']
     if (crop === false) {
@@ -66,24 +82,29 @@ const Image = class {
       this.crop = crop
     }
   }
+
   #setBlur(blur) {
     if (Math.floor(blur) === blur && blur >= 0) {
       this.blur = blur
     }
   }
+
   #setBw(bw) {
     if (bw === true || bw === false) {
       this.bw = bw
     }
   }
+
   #setQuality(quality) {
     if (Math.floor(quality) === quality && quality >= 1 && quality <= 100) {
       this.quality = quality
     }
   }
+
   #setHires() {
     this.hires = window.devicePixelRatio > 1
   }
+
   #setDimensions(width, height) {
     if (typeof this.orig !== 'object') {
       return
@@ -140,6 +161,7 @@ const Image = class {
     this.width = res.width
     this.height = res.height
   }
+
   #setSrc() {
     if (typeof this.orig !== 'object') {
       return

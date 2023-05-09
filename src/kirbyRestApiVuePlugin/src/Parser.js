@@ -2,9 +2,11 @@ import Image from './Image'
 
 const Parser = class {
   options
+
   constructor(options) {
     this.options = options
   }
+
   parse(obj) {
     if (!obj) return ''
     const res = Array.isArray(obj) ? [] : {}
@@ -84,10 +86,12 @@ const Parser = class {
     })
     return res
   }
+
   #parsePage(node) {
     delete node.type
     return node
   }
+
   #parseFile(node) {
     delete node.type
     node.value = this.parse(node.value)
@@ -96,21 +100,25 @@ const Parser = class {
     }
     return node
   }
+
   #parseUser(node) {
     delete node.type
     node.value = this.parse(node.value)
     return node
   }
+
   #parseDate(node) {
-    let date = new Date(node.datetime)
-    date.toJSON = () => { return {
-      InstanceOfDate: node
-    }}
+    const date = new Date(node.datetime)
+    date.toJSON = () => ({
+      InstanceOfDate: node,
+    })
     return date
   }
+
   #parseNumber(node) {
     return parseFloat(node.value)
   }
+
   #parseHtml(node) {
     delete node.type
     let parsed = `${node}`
@@ -132,6 +140,7 @@ const Parser = class {
     }
     return parsed
   }
+
   #parseTextMultiline(text) {
     let parsed = `${text}`
     if (this.options.nl2br) {
@@ -139,6 +148,7 @@ const Parser = class {
     }
     return parsed
   }
+
   #parseSelect(node) {
     if (this.options.includeLabel) {
       return {
@@ -148,6 +158,7 @@ const Parser = class {
     }
     return node.value
   }
+
   #each(obj, iteratee) {
     if (Array.isArray(obj)) {
       obj.forEach((value, key) => iteratee(value, key, obj))
