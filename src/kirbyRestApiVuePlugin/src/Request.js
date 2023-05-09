@@ -124,16 +124,11 @@ const Request = class {
       if (!this.options.parse.raw && Object.prototype.hasOwnProperty.call(json, 'content')) {
         json.content = new Parser(this.options.parse).parse(json.content)
       }
-      return this.#return(json)
+      return json
     } catch (E) {
       if (E instanceof ApiError) throw E
-      throw new ApiError(E.message ?? 'Unknown fatal error',  E.cause ?? 500, url)
+      throw new ApiError(E.message ?? 'Unknown fatal error', E.cause ?? 500, url)
     }
-  }
-
-  #return(obj) {
-    obj.log = () => console.log(JSON.stringify(obj, null, 2))
-    return obj
   }
 }
 
